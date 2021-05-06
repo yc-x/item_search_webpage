@@ -1,0 +1,514 @@
+<div class="container">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+
+<div class = "bg-dark" id ="theForm">
+
+<h1 class="text-white text-center" id="search_title">Product Search</h1>
+<form #searchForm="ngForm">
+<div class="form-group row">
+	<div class="col-sm-2"></div>
+	<span id="notWrap" class="col-sm-2">
+		<label for="kw" id="kwlabel" class="text-white">
+			Keyword
+		</label>
+		<label for="kw" class="text-danger">
+			*        
+		</label>
+	</span>
+	<div class="col-sm-6">
+		<input type="text" id="kw" class="form-control"  placeholder="Enter Product Name(eg.iPhone 8)" required [(ngModel)]="model.keyword" name="keyword" #name="ngModel" [ngClass]="{'invalidDisp':(name.invalid&&name.touched)}">
+		<div id="kwalert" [hidden]="!(name.invalid&&name.touched)" class="text-danger">
+			Please enter a keyword.
+		</div>
+	</div>
+	<div class="col-sm-2"></div>
+
+</div>
+<br/>
+<div class="form-group row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-2">
+		<label id="catlabel" for="cat" class="text-white">
+			Category
+		</label>
+	</div>
+	<div class="col-sm-4">
+		<select class="form-control" id="cat" [(ngModel)]="model.category" name="category">
+			<option *ngFor="let cate of cates" [value]="cate">{{cate}}</option>
+		</select>
+	</div>
+	<div class="col-sm-4"></div>
+</div>
+<br/>
+<div class="form-group row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-2">
+		<label id="condition_label" class="text-white">
+			Condition
+		</label>
+	</div>
+	<div class="col-sm-6 form-check-inline">
+		<label id="new_box" class="form-check-label text-white">
+			<input id="newbox" type="checkbox" class="form-check-input" [(ngModel)]="model.newProd" name="newProd">New
+		</label>
+
+		<label id="used_box" class="form-check-label text-white">
+			<input id="usedbox" type="checkbox" class="form-check-input" [(ngModel)]="model.used" name="used">Used
+		</label>
+
+		<label id="unspec_box" class="form-check-label text-white">
+			<input id="unspecbox" type="checkbox" class="form-check-input" [(ngModel)]="model.unspecified" name="unspecified">Unspecified
+		</label>
+	</div>
+	<div class="col-sm-2"></div>
+</div>
+<br/>
+<div class="form-group row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-2">
+		<label id="ship_label" class="text-white">
+			Shipping Options
+		</label>
+	</div>
+	<div class="col-sm-6">
+		<label id="local_box" class="form-check-label text-white">
+			<input id="localbox"type="checkbox" class="form-check-input" [(ngModel)]="model.locPick" name="locPick">Local Pickup
+		</label>
+		<label id="free_box" class="form-check-label text-white">
+			<input id="freebox" type="checkbox" class="form-check-input" [(ngModel)]="model.freeShip" name="freeShip">Free Shipping
+		</label>
+	</div>
+	<div class="col-sm-2"></div>
+</div>
+<br/>
+<div class="form-group row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-2">
+		<label id="dist_label" class="text-white">
+			Distance(Miles)
+		</label>
+	</div>
+	<div class="col-sm-2">
+		<input type="text" id="dist" class="form-control" size="15" placeholder="10" value="10" required [(ngModel)]="model.distance" name="distance">
+	</div>
+	<div class="col-sm-6"></div>
+</div>
+<br/>
+
+<div class="form-group row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-2">
+		<label id="from_label" class="text-white">
+			From
+		</label>
+		<label class="text-danger">
+			*
+		</label>
+	</div>
+	<div class="col-sm-6">
+		<label id="current_radio" class="form-check-label text-white">
+	    	<input type="radio" id="currentradio" class="form-check-input" (click)="useCurrZip()" name="currLoc" [(ngModel)]="model.currLoc">Current Location
+	    </label>
+    </div>
+    <div class="col-sm-2"></div>
+</div>
+<div class="form-group row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-4">
+		<label id="other_radio" class="form-check-label text-white">
+	    	<input id="otherradio" type="radio" class="form-check-input" (click)="useCustomZip()"  name="other" [(ngModel)]="model.other">Other. Please specify zip code:
+	    </label>
+	</div>
+	<div class="col-sm-4"></div>
+</div>
+<div class="form-group row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-6">
+		<label id="zip_text">
+			<input id="ziptext" type="text" class="form-control" size="50" aria-label="Number" [disabled]="zipDisable" required [(ngModel)]="model.zip" name="zip" #zip="ngModel" (keyup)="autoComplete()" [ngClass]="{'invalidDisp':(zip.invalid&&zip.touched)}" matInput [matAutocomplete]="auto" [pattern]="thePattern">
+			<mat-autocomplete #auto="matAutocomplete">
+				<mat-option *ngFor="let option of options" [value]="option">
+					{{option}}
+				</mat-option>
+			</mat-autocomplete>
+		</label>
+		<div id="zipalert" display="hidden" [hidden]="!(zip.invalid&&zip.touched)" class="text-danger">
+			Please enter a zipcode.
+		</div>
+	</div>
+	<div class="col-sm-2"></div>
+</div>
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-4">
+		<button id="search_button" type="submit" [disabled]="!searchForm.form.valid" class="btn btn-light" style="color: black" (click)="onSubmit()">
+			<span class="text-body">
+				<i class="material-icons md-18">
+					search
+				</i>
+				Search
+			</span>
+		</button>
+		<button id="clear_button" (click)="clearAll()" class="btn btn-light">
+			<i class="material-icons md-18">
+				clear_all
+			</i>
+			Clear
+		</button>
+	</div>
+	<div class="col-sm-6"></div>
+</div>
+</form>
+</div>
+<br>
+<div class="text-center">
+
+		<button type="button" (click)="checkResult()" class="btn btn-dark" id="result_bt">
+		  Results
+		</button>
+		<button type="button" (click)="checkWL()" class="btn btn-light" id="wishlist_bt">
+		  Wish List
+		</button>
+
+</div>
+<div id = "noResponse" class= "alert alert-warning">
+	No Records Found.
+</div>
+
+<div class="progress" [hidden]="hideProgBar">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 50%;"></div>
+</div>
+<div class="text-center" [hidden]="notHavingDetails">
+	<b>{{detailTitle}}</b>
+</div>
+
+
+
+<!--
+<div class="row" [hidden]="hideResult">
+	<div class="col-md-1" [hidden]="visDetail == 'resultIn'">
+		<button class="btn" (click)="backToResult()"><i class="material-icons">keyboard_arrow_left</i>List</button>	
+	</div>
+	<div class="col-md-11"></div>
+	
+	<div class="col-md-1" [hidden]="visDetail == 'detailIn'">
+		<button class="btn" [disabled]="detailDisabled" (click)="searchDetail(markedId)">Details<i class="material-icons">keyboard_arrow_right</i></button>
+	</div>
+	
+</div>
+-->
+<div [@searchFlyInNOut]="visDetail">
+	<div class="text-right" [hidden]="hideResult" style="float:right;">
+		<button class="btn" [disabled]="detailDisabled" (click)="searchDetail(markedId)">Details<i class="material-icons">keyboard_arrow_right</i></button>
+	</div>
+	<div id="totalTable">
+		<table class="table table-striped table-dark table-hover table-responsive-sm" id="resultGoes">
+			<thead class="text-white">
+				<tr>
+					<th>#</th>
+					<th>Image</th>
+					<th>Title</th>
+					<th>Price</th>
+					<th>Shipping</th>
+					<th>Zip</th>
+					<th>Seller</th>
+					<th>Wish List</th>
+				</tr>
+			</thead>
+			<tbody>
+		  		<tr *ngFor="let x of rows | paginate: {itemsPerPage:10, currentPage: p}; let j = index" (click)="markDetail(10*p+j-9)" [class.highlighted]="currentId == x.itemId[0]">
+					<td>{{10 * (p-1) + j + 1}}</td>
+					<td><img [src]="x.galleryURL[0]"></td>
+					<td><a style="color:blue" matTooltip="{{x.title[0]}}" (click) = "searchDetail(x.itemId[0])">{{titles[10 * (p-1) + j]}}</a></td>
+					<td>{{sellPrice[10 * (p-1) + j]}}</td>
+					<td>{{shipPrice[10 * (p-1) + j]}}</td>
+					<td>{{sellZip[10 * (p-1) + j]}}</td>
+					<td>{{seller[10 * (p-1) + j]}}</td>
+					<td><button class="btn" mat-raised-button (click)="addItem(10 * (p-1) + j + 1)" *ngIf="notWish[10 * (p-1) + j]"><i class="material-icons">add_shopping_cart</i></button>
+						<button type="button" class="btn" (click)="removeItem(10 * (p-1) + j + 1)" *ngIf="!notWish[10 * (p-1) + j]"><i class="material-icons orange">remove_shopping_cart</i></button></td>
+				</tr>
+	  		</tbody>
+		</table>
+		<pagination-controls (pageChange)="p = $event"  style="text-align:center;"></pagination-controls>
+	</div>
+
+	<div id="wishTable">
+		<table class="table table-striped table-dark table-hover table-responsive-sm">
+			<thead class="text-white">
+				<tr>
+					<th>#</th>
+					<th>Image</th>
+					<th>Title</th>
+					<th>Price</th>
+					<th>Shipping</th>
+					<th>Seller</th>
+					<th>Wish List</th>
+				</tr>
+			</thead>
+			<tbody id="wishes" *ngFor="let k of wishItems; let y = index" (click)="markWishDetail(y)">
+				<tr [class.highlighted]="highlight == k.id">
+					<td>{{y+1}}</td>
+					<td><img [src]="k.galleryURL"></td>
+					<td><a style="color:blue" matTooltip="{{k.fullTitle}}" (click)="searchDetail(k.id)">{{k.title}}</a></td>
+					<td>{{k.price}}</td>
+					<td>{{k.ships}}</td>
+					<td>{{k.seller}}</td>
+					<td>
+						<button type="button" class="btn" (click)="removeWishitem(y)"><i class="material-icons orange">remove_shopping_cart</i></button>
+					</td>
+				</tr>
+			</tbody>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td><b>Total Shopping</b></td>
+				<td>{{'$' + totalPrice}}</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div [@detailFlyInNOut]="visDetail">
+	<div class="row">
+		<div class="col-sm-1">
+			<button class="btn" (click)="backToResult()"><i class="material-icons">keyboard_arrow_left</i>List</button>	
+		</div>
+		<div class="col-sm-9"></div>
+		<div class="col-sm-2"style="float:right;">
+			<a href="{{shareFBURL}}" target="_blank"><button class="btn"><img src="http://csci571.com/hw/hw8/Images/facebook.png"  style="width:25px;height:30px;"></button></a>
+			<button class="btn" mat-raised-button (click)="addItem(markedIndex)" *ngIf="notWish[markedIndex]"><i class="material-icons">add_shopping_cart</i></button><button type="button" class="btn" (click)="removeItem(markedIndex)" *ngIf="!notWish[markedIndex]"><i class="material-icons orange">remove_shopping_cart</i></button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-5"></div>
+		<div class="col-sm-7" >
+			<ul class="nav nav-tabs nav-pills">
+			  <li class="nav-item">
+			    <a class="nav-link active" id="navProd" (click)="showProdDetail(markedId)">Product</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" id="navPhoto" (click)="showPhoto(markedId)">Photos</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" id="navShip" (click)="showShipDetail(markedId)">Shipping</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" id="navSell" (click)="showSellerDetail(markedId)">Seller</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" id="navSim" (click)="showSimilarProd(markedId)">Similar Products</a>
+			  </li>
+			</ul>
+		</div>
+	</div>
+	<div [hidden]="hideProd">
+		<table [hidden]="noDetErr" class="table table-striped table-dark table-hover ">
+			<thead *ngIf="havePics">
+				<tr>
+					<td><b class="text-white">Product Images</b></td>
+					<td><a class="text-info" data-toggle="modal" data-target="#myModal">View Product Images Here</a></td>
+				</tr>
+			</thead>
+			<tbody id="detailContent" *ngFor="let x of detNames; let i = index">
+				<tr>
+					<td><b>{{x}}</b></td>
+					<td>{{detValues[i]}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div [hidden]="!noDetErr" class= "alert alert-warning">
+			No Records Found.
+		</div>
+	</div>
+	<div [hidden] = "hidePhoto">
+		<div [hidden]="noPhotos" class="row masonry-grid">
+			<div class="col-sm-4 masonry-column">
+				<div>
+					<a href="{{bigPhotoURL[0]}}" target="_blank"><img [src]="bigPhotoURL[0]" class="mini" alt=""></a>
+				</div>
+				<div>
+					<a href="{{bigPhotoURL[1]}}" target="_blank"><img [src]="bigPhotoURL[1]" class="mini" alt=""></a>
+				</div>
+				<div >
+					<a href="{{bigPhotoURL[2]}}" target="_blank"><img [src]="bigPhotoURL[2]" class="mini" alt=""></a>
+				</div>
+			</div>
+			<div class="col-sm-4 masonry-column">
+				<div>
+					<a href="{{bigPhotoURL[3]}}" target="_blank"><img [src]="bigPhotoURL[3]" class="mini" alt=""></a>
+				</div>
+				<div >
+					<a href="{{bigPhotoURL[4]}}" target="_blank"><img [src]="bigPhotoURL[4]" class="mini" alt=""></a>
+				</div>
+				<div>
+					<a href="{{bigPhotoURL[5]}}" target="_blank"><img [src]="bigPhotoURL[5]" class="mini" alt=""></a>
+				</div>
+			</div>
+			<div class="col-sm-4 masonry-column">
+				<div>
+					
+				</div>
+				<div>
+					<a href="{{bigPhotoURL[6]}}" target="_blank"><img class="mini"></a>
+				</div>
+				<div>
+					<a href="{{bigPhotoURL[7]}}"  target="_blank"><img [src]="bigPhotoURL[7]" class="mini" alt=""></a>
+				</div>
+			</div>	
+		</div>
+		<div [hidden]="!noPhotos" class= "alert alert-warning">
+			No Records Found.
+		</div>
+
+	</div>
+
+	<div [hidden]="hideShip">
+		<table [hidden]="noShips" class="table table-striped table-dark table-hover ">
+			<tr  *ngIf="haveShipCost">
+				<th><b>Shipping Cost</b></th>
+				<th><span style="font-weight: normal;">{{shipDetails.cost}}</span></th>
+			</tr>
+			<tr *ngIf="haveShipLoc">
+				<td><b>Shipping Locations</b></td>
+				<td>{{shipDetails.loc}}</td>
+			</tr>
+			<tr *ngIf="haveHandTime">
+				<td><b>Handling Time</b></td>
+				<td>{{shipDetails.time}}</td>
+			</tr>
+			<tr *ngIf="haveExpShip">
+				<td><b>Expedited Shipping</b></td>
+				<td><span *ngIf="shipDetails.expShip"><i class="material-icons green">done</i></span><span *ngIf="!shipDetails.expShip"><i class="material-icons red">clear</i></span></td>
+			</tr>
+			<tr *ngIf="haveOneDay">
+				<td><b>One Day Shipping</b></td>
+				<td><span *ngIf="shipDetails.oneDay"><i class="material-icons green">done</i></span><span *ngIf="!shipDetails.oneDay"><i class="material-icons red">clear</i></span></td>
+			</tr>
+			<tr *ngIf="haveReturn">	
+				<td><b>Return Accepted</b></td>
+				<td><span *ngIf="shipDetails.returnAcpt"><i class="material-icons green">done</i></span><span *ngIf="!shipDetails.returnAcpt"><i class="material-icons red">clear</i></span></td>
+			</tr>
+		</table>
+		<div [hidden]="!noShips" class= "alert alert-warning">
+			No Records Found.
+		</div>
+	</div>
+	<div [hidden]="hideSeller">
+		<table [hidden]="noSeller" class="table table-striped table-dark table-hover ">
+			<tr  *ngIf="haveSellerTitle">
+				<th  colspan="2" style="text-align: center;">{{sellerDetails.title}}</th>
+			</tr>
+			<tr *ngIf="haveFeedBackScore">
+				<td>Feedback Score</td>
+				<td>{{sellerDetails.score}}</td>
+			</tr>
+			<tr *ngIf="havePopularity">
+				<td style="vertical-align: middle;">Popularity</td>
+				<td><div [ngStyle]="getOverlayStyle()">{{sellerDetails.pop}}</div><round-progress [stroke]="stroke" [current]="sellerDetails.pop" [clockwise]="false" [color]="circleColor" [radius]="radius" [max]="max"></round-progress></td>
+			</tr>
+			<tr *ngIf="haveFeedBackRating">
+				<td>Feedback Rating Star</td>
+				<td [ngClass]="{'Purple':sellerDetails.rateColor == 'Purple', 'Yellow':sellerDetails.rateColor == 'Yellow','Turquoise':sellerDetails.rateColor == 'Turquoise','Blue':sellerDetails.rateColor == 'Blue','Red':sellerDetails.rateColor == 'Red','Green':sellerDetails.rateColor == 'Green','Silver':sellerDetails.rateColor == 'Silver','White':sellerDetails.rateColor == 'None'}" id="stars"><span id="star_icon" *ngIf="shooting"><i class="material-icons">stars</i></span><span *ngIf="!shooting"><i id="star_border_icon" class="material-icons">star_border</i></span></td>
+			</tr>
+			<tr *ngIf="haveTopRated">
+				<td>Top Rated</td>
+				<td><span *ngIf="sellerDetails.topR"><i class="material-icons green">done</i></span><span *ngIf="!sellerDetails.topR"><i class="material-icons red">clear</i></span></td>
+			</tr>
+			<tr *ngIf="haveStoreName">
+				<td>Store Name</td>
+				<td>{{sellerDetails.storeName}}</td>
+			</tr>
+			<tr *ngIf="haveStoreURL">
+				<td>Buy Product At</td>
+				<td><a href="{{sellerDetails.storeURL}}" target="_blank">Store</a></td>
+			</tr>
+		</table>
+		<div [hidden]="!noSeller" class= "alert alert-warning">
+			No Records Found.
+		</div>
+	</div>
+	<div [hidden]="hideSim">
+
+		<div *ngIf="haveSimItem" class="text-left">
+			<select [(ngModel)]="orderChoice" (ngModelChange)="changeOrder(orderOrder)">
+				<option>Default</option>
+				<option>Product Name</option>
+				<option>Days Left</option>
+				<option>Price</option>
+				<option>Shipping Cost</option>
+			</select>
+			<select [disabled]="isDefault" [(ngModel)]="orderOrder" (ngModelChange)="changeOrder(orderOrder)">
+				<option>Ascending</option>
+				<option>Descending</option>
+			</select>
+		</div>
+		<br>
+		<div *ngIf="haveSimItem">
+			<div *ngIf="haveSimResult">
+				<table  class="table table-striped table-dark table-hover ">
+					<tbody *ngFor="let y of simProducts; let k = index">
+						<tr  *ngIf="k < valve">
+							<td><img [src]="y.picURL"></td>
+							<td>
+								<a class="text-info" href="{{y.url}}" target="_blank">{{y.name}}</a>
+								<br>
+								<span class="text-success">Price: ${{y.price == -1? 'N/A':y.priceStr}}</span>
+								<br>
+								<span class="text-warning">ShippingCost: ${{y.shipCost == -1? 'N/A':y.shipStr}}</span>
+								<br>
+								<span>Days Left: {{y.dayLeft == -1? 'N/A':y.dayLeft}}</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="text-center" [hidden]="noMoreSim">
+					<button class="btn btn-dark" *ngIf="haveLess" (click)="showMore()">Show More</button>
+					<button class="btn btn-dark" *ngIf="!haveLess" (click)="showLess()">Show Less</button>
+				</div>
+			</div>
+			<div *ngIf="!haveSimResult" class= "alert alert-warning">
+				No Records.
+			</div>
+		</div>
+		
+	</div>
+
+</div>
+</div>
+
+
+<div class="modal" id="myModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+     		<div class="modal-header">
+        		<h4 class="modal-title">Product Images</h4>
+      	  		<button type="button" class="close" data-dismiss="modal">&times;</button>
+     		</div>
+      		<div class="modal-body">
+        		<div id="demo" class="carousel slide" data-ride="carousel">
+					<div class="carousel-inner">
+					    <div class="carousel-item" *ngFor="let k of detailPicURL; let j=index;" [ngClass]="j == 0 ? 'carousel-item active' : 'carousel-item'">
+					    	<a a href="{{detailPicURL[j]}}" target="_blank"><img  [src]="detailPicURL[j]" alt="N/A"></a>
+					    </div>
+				    </div>
+
+					<a class="carousel-control-prev" style="outline:black;" href="#demo" data-slide="prev">
+					    <span class="carousel-control-prev-icon"></span>
+					</a>
+					<a class="carousel-control-next" style="outline:black;" href="#demo" data-slide="next">
+					    <span class="carousel-control-next-icon" ></span>
+					</a>
+				</div>
+      		</div>
+		    <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		    </div>
+		</div>
+	</div>
+</div>
+
+
